@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group input[type="checkbox"] {
+            margin-top: 8px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .data-list {
+            margin-top: 20px;
+        }
+        .data-list div {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-list span {
+            flex-grow: 1;
+        }
+        .data-list button {
+            background-color: #dc3545;
+            margin-left: 5px;
+        }
+        .data-list button:hover {
+            background-color: #c82333;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Add Book</h1>
+    <form method='post' action="">
+        <div class="form-group">
+            <label for='category'>Category</label>
+            <input name="category" placeholder="Select Category" id='category_name' type="text">
+        </div>
+        <div class="form-group">
+            <label for='title'>Title</label>
+            <input name="title" placeholder="Insert Name" id='name' type="text">
+        </div>
+        <div class="form-group">
+            <label for="creator">Creator</label>
+            <input name="creator" id='creator' type="text">
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <input name="content" id='content' type="text">
+        </div>
+        <div class="form-group">
+            <label for="createnadd">Create if category not exist and add book</label>
+            <input type="checkbox" id="create_and_add" name="create_and_add">
+        </div>
+        <button type="submit">Add Item</button>
+    </form>
+    <div class="action-buttons">
+        <form method="get" action="categories">
+            <button type="submit">Categories</button>
+        </form>
+    </div>
+
+    <div id="data-list" class="data-list"></div>
+</div>
+
+<script>
+    var data = {{ data | tojson }};
+    if (data['success'] == false) {
+        alert(data['message']);
+    }
+    console.log(data);
+    data = JSON.parse(data['books']);
+
+    // HTML list creation function
+    function createList() {
+        var list = document.getElementById('data-list');
+        list.innerHTML = ''; // Clear existing list
+        data.forEach(function (item, index) {
+            var listItem = document.createElement('div');
+            listItem.innerHTML = '<span>' + item.title + ' ' + item.creator + ' - ' + item.content + ' - ' + item['created_at']['$date'] + '</span> <button onclick="editItem(' + index + ')">Edit</button> <button onclick="deleteItem(' + index + ')">Delete</button>';
+            list.appendChild(listItem);
+        });
+    }
+
+    // EditItem function with fetch request
+    function editItem(index) {
+        var item = data[index];
+        var editHtml = '<form method="post" action="books/' + item['_id']['$oid'] + '"><input type="text" name="title" id="edit-title" value="' + item.title + '"> <input type="text" name="creator" id="edit-creator" value="' + item.creator + '"> <input name="content" type="text" id="edit-content" value="' + item.content + '"> <button type="submit">Save</button></form>';
+        document.getElementById('data-list').children[index].innerHTML = editHtml;
+    }
+
+    function deleteItem(index) {
+        console.log(index);
+        var item = data[index];
+        fetch('books/' + item['_id']['$oid'], {
+            method: 'DELETE'
+        }).catch((e) => (console.log('Failed', e))).then((res) => {
+                console.log(res);
+                location.reload();
+            }
+        );
+    }
+
+    // Create list on page load
+    window.onload = createList;
+</script>
+
+</body>
+</html>

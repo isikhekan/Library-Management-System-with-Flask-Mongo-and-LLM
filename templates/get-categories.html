@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Categories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .data-list {
+            margin-top: 20px;
+        }
+        .data-list div {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-list span {
+            flex-grow: 1;
+        }
+        .data-list button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        .data-list button:hover {
+            background-color: #0056b3;
+        }
+        .data-list button.delete {
+            background-color: #dc3545;
+        }
+        .data-list button.delete:hover {
+            background-color: #c82333;
+        }
+        .data-list form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>All Categories</h1>
+    <div id='data-list' class="data-list"></div>
+</div>
+
+<script>
+    var data = {{ data | tojson }};
+    data = JSON.parse(data);
+
+    // Function to create the list
+    function createList() {
+        var list = document.getElementById('data-list');
+        list.innerHTML = ''; // Clear existing list
+        data.forEach(function (item, index) {
+            var listItem = document.createElement('div');
+            listItem.innerHTML = '<span>' + item.name + '</span> <button onclick="editItem(' + index + ')">Edit</button> <button class="delete" onclick="deleteItem(' + index + ')">Delete</button>';
+            list.appendChild(listItem);
+        });
+    }
+
+    // Function to edit an item
+    function editItem(index) {
+        var item = data[index];
+        var editHtml = '<form method="post" action="categories/' + item['_id']['$oid'] + '"> <input type="text" name="name" id="edit-name" value="' + item.name + '" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;"> <button type="submit" style="background-color: #007bff; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">Save</button> </form>';
+        document.getElementById('data-list').children[index].innerHTML = editHtml;
+    }
+
+    // Function to delete an item
+    function deleteItem(index) {
+        var item = data[index];
+        fetch('categories/' + item['_id']['$oid'], {
+            method: 'DELETE'
+        }).catch((e) => (console.log('Failed', e))).then((res) => {
+                location.reload();
+            }
+        );
+    }
+
+    // Create list on page load
+    window.onload = createList;
+</script>
+
+</body>
+</html>
