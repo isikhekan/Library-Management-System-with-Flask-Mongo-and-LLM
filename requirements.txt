@@ -1,3 +1,9 @@
 Flask==3.0.3
 pymongo==4.8.0
 python-dotenv==1.0.1
+langchain==0.2.15
+langchain-community==0.2.15
+pypdf==4.3.1
+openai==1.43.0
+langchain-openai==0.1.23
+faiss-cpu==1.8.0.post1

@@ -18,7 +18,6 @@ def create_book_ctrl():
         create_and_add=request.args.get('create_and_add')
     )
 
-
 @books.route('/api/books/<book_id>', methods=['DELETE'])
 def delete_book_ctrl(book_id):
     return delete_book(book_id)

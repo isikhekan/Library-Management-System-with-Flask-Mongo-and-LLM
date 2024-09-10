@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Info Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .chat-message {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            max-width: 70%;
+        }
+        .chat-message.user {
+            align-self: end;
+            background-color: #e1ffc7;
+        }
+        .chat-message.bot {
+            align-self: start;
+            background-color: #f1f1f1;
+        }
+        .input-area {
+            display: flex;
+        }
+        textarea {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .typing-indicator {
+            display: none;
+            font-style: italic;
+            color: chartreuse;
+            margin-bottom: 10px;
+            flex-direction: row;
+            align-self: end;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Book Info Chat</h1>
+    <div class="chat-box" id="llm-answers"></div>
+    <div class="typing-indicator" id="typing-indicator">Yazıyor...</div>
+    <div class="input-area">
+        <textarea id="llm_question" rows="3" placeholder="Enter info that you want about books"></textarea>
+        <button onclick="getAnswer()" type="button">Send</button>
+    </div>
+</div>
+<script>
+    function printLLMAnswers(answers) {
+        var list = document.getElementById('llm-answers');
+        var typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'none';
+        answers.forEach(function (item) {
+            let answer = JSON.parse(item);
+            var answerItem = document.createElement('div');
+            answerItem.className = 'chat-message bot';
+            answerItem.innerHTML = `
+                <h2>${answer.title}</h2>
+                <p><strong>Author:</strong> ${answer.creator}</p>
+                <p>${answer.content}</p>
+            `;
+            list.appendChild(answerItem);
+            list.scrollTop = list.scrollHeight; // Scroll to the bottom
+        });
+    }
+
+    function getAnswer() {
+        let question = document.getElementById('llm_question').value;
+        var list = document.getElementById('llm-answers');
+        var userMessage = document.createElement('div');
+        userMessage.className = 'chat-message user';
+        userMessage.textContent = question;
+        list.appendChild(userMessage);
+        list.scrollTop = list.scrollHeight; // Scroll to the bottom
+        var typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'flex';
+
+
+        fetch('http://127.0.0.1:5000/api/llm-books?question=' + encodeURIComponent(question), {
+            method: 'GET'
+        }).then((res) => res.json())
+            .then((data) => {
+                printLLMAnswers(data);
+            })
+            .catch((e) => {
+                console.log('Failed', e);
+            });
+
+        document.getElementById('llm_question').value = ''; // Clear the input field
+    }
+</script>
+</body>
+</html>

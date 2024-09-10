@@ -7,7 +7,7 @@ class Book:
         self.created_at = created_at
         self.category_id = category_id
         for key, value in kwargs.items():
-            print('unexpected argument', key, value)
+            print('[DEBUG]unexpected argument', key, value)
 
     def to_dict(self, id=True):
         dict = {

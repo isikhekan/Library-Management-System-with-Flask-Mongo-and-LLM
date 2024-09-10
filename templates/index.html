@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
         }
+
         .container {
             width: 80%;
             margin: 20px auto;
@@ -19,21 +20,26 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             color: #333;
         }
+
         form {
             margin-bottom: 20px;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         .form-group label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
         }
+
         .form-group input[type="text"] {
             width: calc(100% - 20px);
             padding: 10px;
@@ -41,9 +47,11 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+
         .form-group input[type="checkbox"] {
             margin-top: 8px;
         }
+
         button {
             background-color: #007bff;
             color: #fff;
@@ -53,12 +61,15 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .data-list {
             margin-top: 20px;
         }
+
         .data-list div {
             background-color: #f9f9f9;
             padding: 10px;
@@ -69,16 +80,20 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .data-list span {
             flex-grow: 1;
         }
+
         .data-list button {
             background-color: #dc3545;
             margin-left: 5px;
         }
+
         .data-list button:hover {
             background-color: #c82333;
         }
+
         .action-buttons {
             display: flex;
             justify-content: flex-end;
@@ -116,8 +131,10 @@
         <form method="get" action="categories">
             <button type="submit">Categories</button>
         </form>
+        <form method="get" action="llm-query">
+            <button type="submit">LLM Query Page</button>
+        </form>
     </div>
-
     <div id="data-list" class="data-list"></div>
 </div>
 
@@ -158,6 +175,7 @@
             }
         );
     }
+
 
     // Create list on page load
     window.onload = createList;
